@@ -1,3 +1,4 @@
+//code for manage the reading from EC, pH, temperature and Dissolved Oxygen sensor
 #include <Ezo_i2c.h>
 #include <Wire.h>                //enable I2C.
 #include <LiquidCrystal_I2C.h>

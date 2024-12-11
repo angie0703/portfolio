@@ -13,7 +13,7 @@ time.sleep(3) #waiting for Arduino reboots
 #setup e-mail for sending data
 password = 'the password'
 yag = yagmail.SMTP('first_email', password)
-email_recipients = ['first_email','second_email']
+email_recipients = ['first_email','second_email', 'third_e-mail']
 
 #update data logger script currently running...
 def data_logger_running():
