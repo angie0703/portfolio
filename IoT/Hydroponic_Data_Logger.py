@@ -11,9 +11,9 @@ ser.reset_input_buffer()
 time.sleep(3) #waiting for Arduino reboots
 
 #setup e-mail for sending data
-password = 'rwxljlvoojbyiwlw'
-yag = yagmail.SMTP('iot.urbanfarmkorindo@gmail.com', password)
-email_recipients = ['angela.radityatama@gmail.com','urbanfarmkorindo@gmail.com']
+password = 'the password'
+yag = yagmail.SMTP('first_email', password)
+email_recipients = ['first_email','second_email']
 
 #update data logger script currently running...
 def data_logger_running():
