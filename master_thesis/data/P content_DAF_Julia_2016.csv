@@ -1,0 +1,19 @@
+DAF;Shoot P content (mg P per plant);P plant content (mg P per plant);P stem and late tiller content (mg P per plant);P panicles content (mg P per plant);P leaves content (mg P per plant);Leaves (g);P leaf content (mg P/g leaf);P leaf content (kg P/kg leaf)
+0;35.09641873;44.08839779;21.15384615;8.991979057;13.94257258;7.88593619;1.768030104;0.00176803
+5;40.8815427;50.27624309;25;9.394700394;15.8815427;8.327576568;1.907102573;0.001907103
+9;34.7107438;53.37016575;21.15384615;18.65942194;13.55689765;7.451283792;1.819404283;0.001819404
+13;26.99724518;65.35911602;15;38.36187084;11.99724518;8.556782334;1.402074367;0.001402074
+18;26.99724518;88.17679558;12.69230769;61.1795504;14.30493749;11.87048277;1.205084727;0.001205085
+23;18.51239669;107.1270718;9.615384615;88.61467513;8.897012079;11.21291379;0.793461204;0.000793461
+28;12.72727273;122.2099448;8.461538462;109.482672;4.265734266;9.222736893;0.462523686;0.000462524
+;;;;;;;;
+Leaves = flag leaves, leaves;;;;;;;;
+Leaves = plants - panicles;;;;;;;;
+;;;;;;;;
+k_pa_max_P = P content in panicles at 28 DAF/Biomass of panicles at 28 DAF;;;;;;;;
+k_pa_max_P;2.623280954;mg P/g panicles;;;;;;
+k_pa_max_P;0.002623281;kg P/kg panicles;;;;;;
+;;;;;;;;
+k_st_max_P = P content in stems/biomass of stems;;;;;;;;
+k_st_max_P;1.178944512;mg P/g stems;;;;;;
+k_st_max_P;0.001178945;kg P/kg stems;;;;;;
