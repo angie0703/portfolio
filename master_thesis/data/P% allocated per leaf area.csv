@@ -1,7 +1,0 @@
-;P% in ML;Total leaf area (cm2 per plant);;;Hayes et al 2022
-Low P ;72.64573991;47.82608696;1.51895638;;
-High P;33.632287;256.5217391;0.131108915;;
-;;;;;
-L1 = youngest fully expanded leaf;;;;;
-;;;;;
-P_area;1.15 + 0.02;g P/m2 leaf;;;
