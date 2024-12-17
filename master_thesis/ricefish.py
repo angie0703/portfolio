@@ -27,11 +27,11 @@ V_phy = V_pond + A_rice*0.1 #[m3]
 
 #%%# Mass and number of fish
 m_fish = 30 #[g] average weight of one fish fry
-n_fish = 10000 #[no of fish] according to Pratiwi 2019, 10000 fish is just for comparing result with literature
-n_rice = 127980 #number of plants in 0.6 ha land
+n_fish = 10000 #[fish] number of fish in the system
+n_rice = 127980 #[plant] number of plants in 0.6 ha land
 
 #%% Disturbances
-data_weather = 'C:/Users/alegn/portfolio/master_thesis/data/DIY_202210_202301_Hourly.csv'
+data_weather = 'C:/Users/alegn/portfolio/master_thesis/DIY_202210_202301_Hourly.csv' #dataset of hourly weather data
 weather = pd.read_csv(data_weather, header=0, sep=';')
 
 #FIRST CYCLE
@@ -41,11 +41,11 @@ t_end = '2023-01-29T08:00'
 weather['Time'] = pd.to_datetime(weather['Time'])
 weather.set_index('Time', inplace=True)
 #first cycle
-T = weather.loc[t_ini:t_end,'Temp'].values #[°C] Mean daily temperature
-Rain = weather.loc[t_ini:t_end,'Rain'].values #[mm] Daily precipitation
-Igl = weather.loc[t_ini:t_end, 'I0'].values #[MJ m-2] Sum of shortwave radiation daily
+T = weather.loc[t_ini:t_end,'Temp'].values #[°C] Mean hourly temperature
+Rain = weather.loc[t_ini:t_end,'Rain'].values #[mm] hourly precipitation
+Igl = weather.loc[t_ini:t_end, 'I0'].values #[MJ m-2] Sum of shortwave radiation (hourly)
 
-I0 = 0.45*Igl*1E6 #Convert [MJ m-2 d-1] to [J m-2 d-1] PAR
+I0 = 0.45*Igl*1E6 #Convert [MJ m-2 h-1] to [J m-2 h-1] PAR
 
 #%% fish model
 #state variables
@@ -67,11 +67,11 @@ pfish = {
     "x_N_fed": 0.05,  # [-] fraction of N in feed
     "x_P_fed": 0.01,  # [-] fraction of P in feed
     "k_DMR": 0.31,
-    "Ksp": 1,  # [g C m-3] Half-saturation constant for phytoplankton
-    "Tmin": 22,
-    "Topt": 28,
-    "Tmax": 32,
-    'V_pond': V_pond
+    "Ksp": 1,  # [g C m^-3] Half-saturation constant for phytoplankton
+    "Tmin": 22, #[°C] minimum temperature for fish growth
+    "Topt": 28, #[°C] optimum temperature for fish growth
+    "Tmax": 32, #[°C] maximum temperature for fish growth
+    'V_pond': V_pond #[m^3] volume of the water in the pond
 }
 
 #initialize object
@@ -93,26 +93,26 @@ x0_pn = {'M_N_net': 0.053*V_phy, #[g] Net phosphorus in the system (Mei et al. 2
          'Nrice' : 0, # equals to f_N_plt_upt
          } #all multiplied with V_phy because all of the values are originally in [g/m3]
 p_pn = {
-      'mu_Up': 0.005/24, #[h-1] maximum nutrient uptake coefficient
-      'mu_phy':  1.27/24, #[h-1] maximum growth rate of phytoplankton
-      'l_sl': 3.5e-7, #[m2 g-1] phytoplankton bioMass-specific light attenuation
-      'l_bg': 0.77, #[m-1] light attenuation by non-phytoplankton components
-      'Kpp': 2232/12, # [J m-2 h-1] half-saturation constant of phytoplankton production (for 12 hours of daylight per day)
-      'c_prd': 0.15/24, #[h-1] phytoplankton mortality rate
-      'c_cmp': 0.004/24, #[m3 (g d)-1] phytoplankton crowding loss constant
-      'c1': 1.57, # [-] temperature coefficients
-      'c2': 0.24, # [-] temperature coefficients
-      'Topt': 28, #optimum temperature for phytoplankton growth
-      'K_N_phy': 0.1, #[g m-3] half saturation constant for N uptake (Prats & Llavador, 1994)
-      'K_P_phy': 0.02, #[g m-3] half saturation constant for P uptake (Prats & Llavador, 1994)  
-      'kNdecr': 0.05/24, #[h-1] decomposition rate (to replace bacteria decomposition rate) (Prats & Llavador, 1994)
-      'kPdecr': 0.4/24, #[h-1] decomposition rate (to replace bacteria decomposition rate) (Prats & Llavador, 1994)    
-      'f_N_edg': 0.8*Arice_ha*1000/24, # [g h-1] endogenous N supply from soil [originally kg N ha-1 d-1]
-      'f_P_edg': 0.5*Arice_ha*1000/24, #[g h-1] endogenous P supply from soil [originally kg N ha-1 d-1]
-      'MuptN': 8*Arice_ha*1000/24, #[g h-1] maximum daily N uptake by rice plants, originally in [kg ha-1 d-1], only 0.6 ha of land that is planted with rice
-      'MuptP': 8*Arice_ha*1000/24,#[g h-1] maximum daily P uptake by rice plants, originally in [kg ha-1 d-1], only 0.6 ha of land that is planted with rice
-      'kNphy': 0.06, #[g N/g bioMass] fraction of N from phytoplankton biomass
-      'kPphy': 0.01, #[g P/g biomass] fraction of P from phytoplankton biomass
+      'mu_Up': 0.005/24,    #[h-1] maximum nutrient uptake coefficient
+      'mu_phy':  1.27/24,   #[h-1] maximum growth rate of phytoplankton
+      'l_sl': 3.5e-7,       #[m2 g-1] phytoplankton bioMass-specific light attenuation
+      'l_bg': 0.77,         #[m-1] light attenuation by non-phytoplankton components
+      'Kpp': 2232/12,       # [J m-2 h-1] half-saturation constant of phytoplankton production (for 12 hours of daylight per day)
+      'c_prd': 0.15/24,     #[h-1] phytoplankton mortality rate
+      'c_cmp': 0.004/24,    #[m3 (g h)-1] phytoplankton crowding loss constant
+      'c1': 1.57,           # [-] temperature coefficients
+      'c2': 0.24,           # [-] temperature coefficients
+      'Topt': 28,           #[°C] optimum temperature for phytoplankton growth
+      'K_N_phy': 0.1,       #[g m-3] half saturation constant for N uptake (Prats & Llavador, 1994)
+      'K_P_phy': 0.02,      #[g m-3] half saturation constant for P uptake (Prats & Llavador, 1994)  
+      'kNdecr': 0.05/24,    #[h-1] decomposition rate (to replace bacteria decomposition rate) (Prats & Llavador, 1994)
+      'kPdecr': 0.4/24,     #[h-1] decomposition rate (to replace bacteria decomposition rate) (Prats & Llavador, 1994)    
+      'f_N_edg': 0.8*Arice_ha*1000/24,      # [g h-1] endogenous N supply from soil [originally kg N ha-1 d-1]
+      'f_P_edg': 0.5*Arice_ha*1000/24,      #[g h-1] endogenous P supply from soil [originally kg N ha-1 d-1]
+      'MuptN': 8*Arice_ha*1000/24,          #[g h-1] maximum daily N uptake by rice plants, originally in [kg ha-1 d-1], only 0.6 ha of land that is planted with rice
+      'MuptP': 8*Arice_ha*1000/24,          #[g h-1] maximum daily P uptake by rice plants, originally in [kg ha-1 d-1], only 0.6 ha of land that is planted with rice
+      'kNphy': 0.06,                        #[g N/g bioMass] fraction of N from phytoplankton biomass
+      'kPphy': 0.01,                        #[g P/g biomass] fraction of P from phytoplankton biomass
       'V_phy': V_phy,
 
      }
@@ -173,11 +173,15 @@ drice = {'I0':np.array([tsim, I0]).T,
 rice = Rice_hourly(tsim, dt, x0rice, price)
 #%% Input (u)
 #inorganic fertilizer types and concentration used in Indonesia: 
+
+# Fill the Nitrogen source based on the type of fertilizers used for the field
 #Nitrogen source: NPK (15%:15%:15%), Urea (46% N)
 #NPK fertilizer recommended doses 167 kg/ha (Yassi 2023)
+
 # NPK_w = 167*Arice_ha #[kg]
 # NPK = (15/100)*NPK_w
 NPK = 0
+
 #Urea fertilizer recommended doses 100 kg/ha (Yassi 2023)
 #Urea fertilizer recommended doses 200 kg/ha (Bedriyetti, 2000)
 Urea_w = 200*Arice_ha #[kg]
@@ -197,7 +201,7 @@ N_ingf_2 = N_ingf - N_ingf_1
 SP36 = 31*Arice_ha
 I_P = (7.85/100)*SP36*1000 #[g P]
 
-#Organic fertilizer (Kang'ombe 2006), to replace the organic fertilizer suggested by Yassi 2023
+#N and P content from chicken manure (Kang'ombe 2006)
 Norgf = (1.23/100)*500*1000 #[g N]
 Porgf = (1.39/100)*500*1000 #[g P]
 
@@ -209,6 +213,7 @@ u_pn = {'N_ingf_1': 0, 'N_ingf_2': 0, 'N_ingf_3':0, 'P_ingf': 0, 'Norgf': 0, 'Po
 # u_pn = {'N_ingf_1': N_ingf_1, 'N_ingf_2': N_ingf_2, 'N_ingf_3':0, 'P_ingf': I_P, 'Norgf': 0, 'Porgf': 0}
 #experiment 4: using only inorganic and organic fertilizers
 # u_pn = {'N_ingf_1': N_ingf_1, 'N_ingf_2': N_ingf_2, 'N_ingf_3':0, 'P_ingf': I_P, 'Norgf': Norgf, 'Porgf': Porgf}
+
 #%%run model
 
 it = np.nditer(tsim[:-1], flags=['f_index'])
@@ -233,18 +238,18 @@ for ti in it:
         #retrieve rice simulation result for pnutrient
         d_pn['DVS'] = np.array([yrice['t'], yrice['DVS']])
 
-    # if ti <= 24*24 or ti > 79*24:
-    #     d_pn['f_N_sol'] = np.array([tsim.T, np.zeros_like(tsim)])
-    #     d_pn['f_N_prt'] = np.array([tsim.T, np.zeros_like(tsim)])
-    #     d_pn['f_P_sol'] = np.array([tsim.T, np.zeros_like(tsim)])
-    #     d_pn['f_P_prt'] = np.array([tsim.T, np.zeros_like(tsim)])
+    if ti <= 24*24 or ti > 79*24:
+        d_pn['f_N_sol'] = np.array([tsim.T, np.zeros_like(tsim)])
+        d_pn['f_N_prt'] = np.array([tsim.T, np.zeros_like(tsim)])
+        d_pn['f_P_sol'] = np.array([tsim.T, np.zeros_like(tsim)])
+        d_pn['f_P_prt'] = np.array([tsim.T, np.zeros_like(tsim)])
        
-    # else: 
-    #    yfish = fish.run(tspan, dfish)
-    #    d_pn['f_N_sol'] = np.array([yfish['t'], yfish['f_N_sol']])
-    #    d_pn['f_N_prt'] = np.array([yfish['t'], yfish['f_N_prt']])
-    #    d_pn['f_P_sol'] = np.array([yfish['t'], yfish['f_P_sol']])
-    #    d_pn['f_P_prt'] = np.array([yfish['t'], yfish['f_P_prt']])
+    else: 
+       yfish = fish.run(tspan, dfish)
+       d_pn['f_N_sol'] = np.array([yfish['t'], yfish['f_N_sol']])
+       d_pn['f_N_prt'] = np.array([yfish['t'], yfish['f_N_prt']])
+       d_pn['f_P_sol'] = np.array([yfish['t'], yfish['f_P_sol']])
+       d_pn['f_P_prt'] = np.array([yfish['t'], yfish['f_P_prt']])
        
 # yfish_all = fish.y 
 ypn_all = pnut.y 
