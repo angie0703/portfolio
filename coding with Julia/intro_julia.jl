@@ -26,7 +26,6 @@ function bar(x,f)
     f(x)
 end
 bar(2.0, x -> x^2)
-bar(2.0, x = x^2)
 
 # Immutable point
 struct Point
@@ -129,9 +128,6 @@ opfoo(1,1)
 kwfoo(a; b::Int = 0) = a+b
 kwfoo(1)
 kwfoo(1, b =1)
-
-# It has to follow the sequence
-kwfoo(b=1, a=1)
 
 module Mod
 
